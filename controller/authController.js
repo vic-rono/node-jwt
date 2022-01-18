@@ -1,3 +1,4 @@
+
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -30,8 +31,9 @@ exports.login = async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) return res.status(400).json("Invalid password");
-
+     
     const token = jwt.sign({ _id: user._id }, process.env.SECRET_TOKEN, { expiresIn: process.env.JWT_EXPIRES_IN});
+    const verifyToken = await jwt.verify(token, process.env.SECRET_TOKEN)
     res.header("auth-token", token).send(token);
   } catch (err) {
     res.status(500).json(err);
